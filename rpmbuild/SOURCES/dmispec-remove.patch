@@ -1,0 +1,39 @@
+From 39869fb9346cd46097bd6d70a90f351938d30296 Mon Sep 17 00:00:00 2001
+From: David Sommerseth <davids@redhat.com>
+Date: Fri, 5 Apr 2013 18:25:23 +0200
+Subject: [PATCH 1/2] Do not add explictly 'dmispec' attributes inside
+ switch() in dmi_decode()
+
+The dmispec attribute is added outside the switch() call, and must not be
+duplicated.  If this happens, an invalid XML file will be generated.
+(Un)fortunately, libxml2 is quite forgiving to this error.  But xmllint
+will complain about it and other XML libraries (such as python-lxml)
+may reject such XML data.
+
+Signed-off-by: David Sommerseth <davids@redhat.com>
+---
+ src/dmidecode.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/src/dmidecode.c b/src/dmidecode.c
+index 17f2130..215c3f4 100644
+--- a/src/dmidecode.c
++++ b/src/dmidecode.c
+@@ -4784,7 +4784,6 @@ xmlNode *dmi_decode(xmlNode *prnt_n, dmi_codes_major *dmiMajor, struct dmi_heade
+ 
+         case 40:               /* 3.3.41 Additional Information */
+                 dmixml_AddAttribute(sect_n, "subtype", "AdditionalInformation");
+-                dmixml_AddAttribute(sect_n, "dmispec", "3.3.41");
+ 
+                 if(h->length < 0x0B) {
+                         break;
+@@ -4795,7 +4794,6 @@ xmlNode *dmi_decode(xmlNode *prnt_n, dmi_codes_major *dmiMajor, struct dmi_heade
+ 
+         case 41:               /* 3.3.42 Onboard Device Extended Information */
+                 dmixml_AddAttribute(sect_n, "subtype", "OnboardDeviceExtendedInformation");
+-                dmixml_AddAttribute(sect_n, "dmispec", "3.3.42");
+ 
+                 if(h->length < 0x0B) {
+                         break;
+-- 
+1.7.10.2

@@ -1,0 +1,31 @@
+From 69a1c9ca658c9708698cde6aee32af7bb2e16f9a Mon Sep 17 00:00:00 2001
+From: David Sommerseth <davids@redhat.com>
+Date: Thu, 20 Jun 2013 12:58:12 +0200
+Subject: [PATCH] Fixed a missing break statement in a switch for DMI section
+ 3.3.7.2
+
+This missing break could cause duplicated 'installed' attributes in
+<InstalledSize/> or <EnabledSize/> XML tags.  This is only happening
+when dmi_memory_module_size() is called and only on some hardware.
+
+Signed-off-by: David Sommerseth <davids@redhat.com>
+---
+ src/dmidecode.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/dmidecode.c b/src/dmidecode.c
+index 215c3f4..dae2fef 100644
+--- a/src/dmidecode.c
++++ b/src/dmidecode.c
+@@ -1516,6 +1516,7 @@ void dmi_memory_module_size(xmlNode *node, const char *tagname, u8 code)
+         case 0x7F:
+                 dmixml_AddAttribute(data_n, "installed", "0");
+                 check_conn = 0;
++                break;
+         default:
+                 dmixml_AddAttribute(data_n, "installed", "1");
+                 dmixml_AddAttribute(data_n, "unit", "MB");
+-- 
+1.7.10.2
+
+
