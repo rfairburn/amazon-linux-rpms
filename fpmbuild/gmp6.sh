@@ -14,6 +14,9 @@ mkdir /tmp/gmp
 sudo make DESTDIR=/tmp/gmp install
 # You do test your binaries, right?
 make test
+# Add ld.so.conf file for ldconfig to utilize to the 'package'
+mkdir -p /tmp/gmp/etc/ld.so.conf.d
+echo /opt/gmp6/lib > /tmp/gmp/etc/ld.so.conf.d/gmp6.conf
 # Build the FPM package and say that it provides libgmp.so.10()(64bit) (Required for python-crypto)
 echo <<EOF > run-ldconfig.sh
 #!/bin/sh
